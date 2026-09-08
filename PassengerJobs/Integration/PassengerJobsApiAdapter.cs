@@ -53,13 +53,8 @@ namespace PassengerJobs.Integration
             };
 
             PJMain.Log($"[PassengerJobs.API] lifecycle event={args.EventId}, state={snapshot.NativeState}, payment={args.ObservedPayment}");
-            var handlers = JobLifecycleChanged;
-            if (handlers == null) return;
-            foreach (EventHandler<PassengerJobLifecycleEventArgs> handler in handlers.GetInvocationList())
-            {
-                try { handler(this, args); }
-                catch (Exception ex) { PJMain.Error($"PassengerJobs.API subscriber failed for {args.EventId}", ex); }
-            }
+            LifecycleEventDispatcher.Dispatch(this, JobLifecycleChanged, args,
+                (eventId, exception) => PJMain.Error($"PassengerJobs.API subscriber failed for {eventId}", exception));
         }
 
         private static PassengerJobSnapshot Snapshot(Job job) => new PassengerJobSnapshot

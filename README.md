@@ -16,6 +16,8 @@ Copy `Directory.Build.targets.EXAMPLE` to `Directory.Build.targets`, set the loc
 
 Run the dependency-free policy tests with `dotnet run --project PassengerJobs.Tests/PassengerJobs.Tests.csproj -c Release`. The Unity, save/reload, payout and host/client acceptance matrix is in [VALIDATION.md](VALIDATION.md); the build never starts the game.
 
+`tools/Build-IntegrationPackage.ps1` produces a hash-manifested deterministic archive. The checked-in source does not contain the upstream Unity asset bundle or downloaded translation catalog, so those two immutable runtime inputs are taken from an explicit `RuntimeSeedDirectory` and recorded in the manifest. `tools/Install-IntegrationPackage.ps1` refuses a running game, backs up every replaced file and verifies hashes. `tools/Capture-ValidationEvidence.ps1` records installed hashes and extracts correlated PassengerJobs/BDVM/Multiplayer log lines around a manual session.
+
 ## Upstream and license
 
 Original project and copyright: Katy Fox / [katycat5e/DVPassengerJobs](https://github.com/katycat5e/DVPassengerJobs). The upstream and fork remain under the MIT license in [LICENSE](LICENSE). BDVM-specific changes are intentionally kept on `bdvm-integration` so upstream history and the integration delta remain reviewable.

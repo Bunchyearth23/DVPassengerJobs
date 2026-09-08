@@ -4,6 +4,7 @@ using DV.ThingTypes;
 using DV.ThingTypes.TransitionHelpers;
 using Newtonsoft.Json.Linq;
 using PassengerJobs.Generation;
+using PassengerJobs.Integration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,14 +97,10 @@ namespace PassengerJobs.Injectors
             {
                 if (loadedData?.GetObjectViaJSON<JobsSaveGameData>(SaveGameKeys.Jobs, JobSaveManager.serializeSettings) is JobsSaveGameData jobData)
                 {
-                    var existingPassengerIds = new HashSet<string>(mainJobData.jobChains
-                        .OfType<PassengerChainSaveData>()
-                        .Select(chain => chain.firstJobId));
-                    JobChainSaveData[] combinedChains = mainJobData.jobChains
-                        .Concat(jobData.jobChains.Where(chain => !(chain is PassengerChainSaveData passenger) || existingPassengerIds.Add(passenger.firstJobId)))
-                        .ToArray();
-
-                    mainJobData.jobChains = combinedChains;
+                    mainJobData.jobChains = SaveIntegrityPolicy.AppendDistinct(
+                        mainJobData.jobChains,
+                        jobData.jobChains,
+                        chain => chain is PassengerChainSaveData passenger ? passenger.firstJobId : null);
                 }
             }
             catch (Exception ex)

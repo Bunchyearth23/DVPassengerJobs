@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using DV.ThingTypes;
+using PassengerJobs.Integration;
 
 namespace PassengerJobs.Patches
 {
@@ -67,8 +68,15 @@ namespace PassengerJobs.Patches
 
         public static PassengerChainController? LoadPassengerChain(PassengerChainSaveData passChainData)
         {
+            if (passChainData.jobChainData == null || passChainData.jobChainData.Length == 0 ||
+                passChainData.trainCarGuids == null || passChainData.trainCarGuids.Length == 0)
+            {
+                PJMain.Warning("Passenger job chain save data is incomplete; skipping it without mutating the remaining save.");
+                return null;
+            }
+
             var jobCars = passChainData.trainCarGuids.Select(TrainCarRegistry.Instance.GetTrainCarByCarGuid).ToArray();
-            if (jobCars.Any(car => car == null))
+            if (SaveIntegrityPolicy.HasMissingReference(jobCars))
             {
                 PJMain.Warning($"Couldn't find trainCarsForJobChain from chainSaveData {passChainData.firstJobId}! Skipping load of this job chain!");
                 return null;

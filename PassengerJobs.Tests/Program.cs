@@ -10,6 +10,8 @@ internal static class Program
         {
             GenerationCommandsAreIdempotent();
             LifecycleEventsAreIdempotentPerJobAndState();
+            SubscriberFailuresAreIsolated();
+            SaveDataIsValidatedAndDeduplicated();
             Console.WriteLine("PassengerJobs policy tests passed.");
             return 0;
         }
@@ -18,6 +20,30 @@ internal static class Program
             Console.Error.WriteLine(exception);
             return 1;
         }
+    }
+
+    private static void SubscriberFailuresAreIsolated()
+    {
+        var delivered = 0;
+        var errors = 0;
+        EventHandler<PassengerJobLifecycleEventArgs> handlers = (_, __) => throw new InvalidOperationException("expected");
+        handlers += (_, __) => delivered++;
+        LifecycleEventDispatcher.Dispatch(new object(), handlers, new PassengerJobLifecycleEventArgs { EventId = "PJ-1:completed" }, (_, __) => errors++);
+        Assert(errors == 1, "subscriber exception is reported once");
+        Assert(delivered == 1, "later subscriber still receives the event");
+    }
+
+    private static void SaveDataIsValidatedAndDeduplicated()
+    {
+        Assert(SaveIntegrityPolicy.HasMissingReference<object>(null), "missing reference collection is rejected");
+        Assert(SaveIntegrityPolicy.HasMissingReference(new object[] { new object(), null! }), "null resolved car is rejected");
+        Assert(!SaveIntegrityPolicy.HasMissingReference(new[] { new object() }), "complete references are accepted");
+
+        var existing = new[] { new SaveRow("PJ-1", "original") };
+        var incoming = new[] { new SaveRow("PJ-1", "duplicate"), new SaveRow("PJ-2", "new") };
+        var merged = SaveIntegrityPolicy.AppendDistinct(existing, incoming, row => row.Id);
+        Assert(merged.Length == 2, "duplicate save chain is removed");
+        Assert(merged[0].Value == "original" && merged[1].Id == "PJ-2", "existing chain wins and order is stable");
     }
 
     private static void GenerationCommandsAreIdempotent()
@@ -49,5 +75,12 @@ internal static class Program
     private static void Assert(bool condition, string message)
     {
         if (!condition) throw new InvalidOperationException("Assertion failed: " + message);
+    }
+
+    private sealed class SaveRow
+    {
+        public SaveRow(string id, string value) { Id = id; Value = value; }
+        public string Id { get; }
+        public string Value { get; }
     }
 }

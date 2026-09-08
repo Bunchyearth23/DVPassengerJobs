@@ -9,5 +9,7 @@
     <ProjectReference Include="..\PassengerJobs.API\PassengerJobs.API.csproj" />
     <Compile Include="..\PassengerJobs\Integration\GenerationSuspensionPolicy.cs" Link="GenerationSuspensionPolicy.cs" />
     <Compile Include="..\PassengerJobs\Integration\LifecyclePublicationGuard.cs" Link="LifecyclePublicationGuard.cs" />
+    <Compile Include="..\PassengerJobs\Integration\LifecycleEventDispatcher.cs" Link="LifecycleEventDispatcher.cs" />
+    <Compile Include="..\PassengerJobs\Integration\SaveIntegrityPolicy.cs" Link="SaveIntegrityPolicy.cs" />
   </ItemGroup>
 </Project>
