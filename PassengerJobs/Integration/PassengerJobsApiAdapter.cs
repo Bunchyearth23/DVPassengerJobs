@@ -6,11 +6,30 @@ using System.Linq;
 
 namespace PassengerJobs.Integration
 {
-    internal sealed class PassengerJobsApiAdapter : IPassengerJobsApiV1
+    internal sealed class PassengerJobsApiAdapter : IPassengerJobsApiV2
     {
-        public string ApiVersion => "1.0";
+        private readonly object generationGate = new object();
+        private readonly System.Collections.Generic.Dictionary<string, bool> generationCommands = new System.Collections.Generic.Dictionary<string, bool>(StringComparer.Ordinal);
+        private bool automaticGenerationSuspended;
+
+        public string ApiVersion => "1.1";
         public string PassengerJobsVersion => PJMain.ModEntry.Info.Version;
+        public bool CanControlAutomaticGeneration => !MultiplayerShim.IsInitialized || MultiplayerShim.IsHost;
+        public bool IsAutomaticGenerationSuspended { get { lock (generationGate) return automaticGenerationSuspended; } }
         public event EventHandler<PassengerJobLifecycleEventArgs>? JobLifecycleChanged;
+
+        public bool SetAutomaticGenerationSuspended(string operationId, bool suspended)
+        {
+            if (string.IsNullOrWhiteSpace(operationId) || !CanControlAutomaticGeneration) return false;
+            lock (generationGate)
+            {
+                if (generationCommands.TryGetValue(operationId, out var prior)) return prior == suspended;
+                generationCommands.Add(operationId, suspended);
+                automaticGenerationSuspended = suspended;
+                PJMain.Log($"PassengerJobs automatic generation policy changed: suspended={suspended}, operation={operationId}");
+                return true;
+            }
+        }
 
         public bool TryGetJob(string jobId, out PassengerJobSnapshot snapshot)
         {

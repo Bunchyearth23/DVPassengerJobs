@@ -155,6 +155,15 @@ namespace PassengerJobs.Generation
 
         public void Update()
         {
+            if (PJMain.Api.IsAutomaticGenerationSuspended)
+            {
+                if (_generationRoutine != null)
+                {
+                    StopCoroutine(_generationRoutine);
+                    _generationRoutine = null;
+                }
+                return;
+            }
             if (Controller.logicStation == null || !AStartGameData.carsAndJobsLoadingFinished)
             {
                 return;

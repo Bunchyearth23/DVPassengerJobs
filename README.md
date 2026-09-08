@@ -4,7 +4,7 @@ This repository is a fork of [katycat5e/DVPassengerJobs](https://github.com/katy
 
 The `bdvm-integration` branch preserves PassengerJobs gameplay and adds a small, versioned `PassengerJobs.API` assembly. The API exposes passenger-job lookup plus available, taken, completed and abandoned lifecycle observations. It exists so integrations such as BDVM can identify a PassengerJobs job and reconcile its observed payout without reflecting over PassengerJobs implementation types.
 
-The API is observational: it does not grant another mod authority to complete jobs, alter payouts, create consists or mutate PassengerJobs saves. Consumers remain responsible for their own idempotency and must fail closed when the API version is unsupported.
+API 1.0 remains observational: it does not grant another mod authority to complete jobs, alter payouts, create consists or mutate PassengerJobs saves. API 1.1 adds one narrow host-only control that suspends automatic job generation before any passenger consist is created. It does not delete existing jobs or cars. Consumers remain responsible for their own idempotency and must fail closed when the API version is unsupported.
 
 The fork manifest reports 5.3.0 and intentionally omits the upstream auto-update feed. Following that feed could replace the integration build with an upstream package that does not contain `PassengerJobs.API.dll`. A fork-specific update channel will be added only after runtime validation and release packaging.
 

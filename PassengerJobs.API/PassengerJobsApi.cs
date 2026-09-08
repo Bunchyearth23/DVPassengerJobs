@@ -36,6 +36,13 @@ namespace PassengerJobs.API
         event EventHandler<PassengerJobLifecycleEventArgs>? JobLifecycleChanged;
     }
 
+    public interface IPassengerJobsApiV2 : IPassengerJobsApiV1
+    {
+        bool CanControlAutomaticGeneration { get; }
+        bool IsAutomaticGenerationSuspended { get; }
+        bool SetAutomaticGenerationSuspended(string operationId, bool suspended);
+    }
+
     public static class PassengerJobsApi
     {
         private static readonly object Gate = new object();
