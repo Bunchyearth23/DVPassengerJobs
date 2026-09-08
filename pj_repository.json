@@ -3,52 +3,7 @@
     {
       "Id": "PassengerJobs",
       "Version": "5.3.0",
-      "DownloadUrl": "https://github.com/katycat5e/DVPassengerJobs/releases/download/v5.3/PassengerJobs.zip"
-    },
-	{
-      "Id": "PassengerJobs",
-      "Version": "5.2.2",
-      "DownloadUrl": "https://github.com/katycat5e/DVPassengerJobs/releases/download/v5.2.2/PassengerJobs.zip"
-    },
-    {
-      "Id": "PassengerJobs",
-      "Version": "5.2.0",
-      "DownloadUrl": "https://github.com/katycat5e/DVPassengerJobs/releases/download/v5.2/PassengerJobs.zip"
-    },
-	{
-      "Id": "PassengerJobs",
-      "Version": "5.1.1",
-      "DownloadUrl": "https://github.com/katycat5e/DVPassengerJobs/releases/download/v5.1/PassengerJobs.zip"
-    },
-	{
-      "Id": "PassengerJobs",
-      "Version": "5.1.0",
-      "DownloadUrl": "https://github.com/katycat5e/DVPassengerJobs/releases/download/v5.1/PassengerJobs.zip"
-    },
-	{
-      "Id": "PassengerJobs",
-      "Version": "5.0.0",
-      "DownloadUrl": "https://github.com/katycat5e/DVPassengerJobs/releases/download/v5.0/PassengerJobs.zip"
-    },
-    {
-      "Id": "PassengerJobs",
-      "Version": "4.2.0",
-      "DownloadUrl": "https://github.com/katycat5e/DVPassengerJobs/releases/download/v4.2/PassengerJobs.zip"
-    },
-	{
-      "Id": "PassengerJobs",
-      "Version": "4.1.2",
-      "DownloadUrl": "https://github.com/katycat5e/DVPassengerJobs/releases/download/v4.1.2/PassengerJobs.zip"
-    },
-	{
-      "Id": "PassengerJobs",
-      "Version": "4.0.4",
-      "DownloadUrl": "https://github.com/katycat5e/DVPassengerJobs/releases/download/v4.0.4/PassengerJobs.zip"
-    },
-	{
-      "Id": "PassengerJobs",
-      "Version": "4.0.2",
-      "DownloadUrl": "https://github.com/katycat5e/DVPassengerJobs/releases/download/v4.0.2/PassengerJobs.zip"
+      "DownloadUrl": "https://github.com/Bunchyearth23/DVPassengerJobs/releases/download/v5.3.0-bdvm-beta.2/PassengerJobs-5.3.0-bdvm-beta.2.zip"
     }
   ]
 }

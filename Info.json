@@ -7,5 +7,6 @@
   "EntryMethod": "PassengerJobs.PJMain.Load",
   "Requirements": ["DVLangHelper"],
   "LoadAfter": ["SlicedPassengerCars","SkinManagerMod","DVLangHelper","Multiplayer"],
-  "HomePage": "https://github.com/Bunchyearth23/DVPassengerJobs"
+  "HomePage": "https://github.com/Bunchyearth23/DVPassengerJobs",
+  "Repository": "https://raw.githubusercontent.com/Bunchyearth23/DVPassengerJobs/bdvm-integration/pj_repository.json"
 }

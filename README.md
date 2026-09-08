@@ -8,7 +8,7 @@ API 1.0 remains observational: it does not grant another mod authority to comple
 
 Lifecycle notifications are authoritative on single-player and multiplayer hosts only. Event IDs are stable (`jobId:lifecycle`) and duplicate native callbacks are suppressed for the lifetime of the process. Completed payments are captured immediately before native completion and subscriber failures are isolated and logged. In strict mode, fresh free consists are refused at the final spawn boundary while an existing consist is still allowed to continue onto its next passenger leg.
 
-The fork manifest reports 5.3.0 and intentionally omits the upstream auto-update feed. Following that feed could replace the integration build with an upstream package that does not contain `PassengerJobs.API.dll`. A fork-specific update channel will be added only after runtime validation and release packaging.
+The fork manifest reports 5.3.0 and uses the fork-specific `pj_repository.json` update feed. It never follows the upstream feed, because an upstream package can legitimately omit `PassengerJobs.API.dll` and is therefore not interchangeable with this integration build. Beta packages remain GitHub prereleases and must not be presented as stable runtime validation.
 
 ## Build
 
