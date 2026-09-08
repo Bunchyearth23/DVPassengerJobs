@@ -13,6 +13,7 @@ namespace PassengerJobs.MP.Multiplayer;
 internal class PJServer : IDisposable
 {
     private IServer? _server;
+    private readonly List<PlatformController> _subscribedPlatforms = new();
 
     public PJServer(IServer server)
     {
@@ -30,6 +31,15 @@ internal class PJServer : IDisposable
     public void Dispose()
     {
         PJMain.Log("Server stopped");
+        if (_server != null)
+            _server.OnPlayerConnected -= OnPlayerConnected;
+        RouteManager.RuralStationsCreated -= Server_OnStationsCreated;
+        foreach (var platform in _subscribedPlatforms)
+        {
+            platform.TaskComplete -= OnTaskComplete;
+            platform.PlatformStateChange -= OnPlatformStateChanged;
+        }
+        _subscribedPlatforms.Clear();
         _server = null;
 
         PJMain.Settings.OnSettingsSaved -= OnSettingsChanged;
@@ -69,6 +79,7 @@ internal class PJServer : IDisposable
             {
                 platformController.TaskComplete += OnTaskComplete;
                 platformController.PlatformStateChange += OnPlatformStateChanged;
+                _subscribedPlatforms.Add(platformController);
             }
             else
             {

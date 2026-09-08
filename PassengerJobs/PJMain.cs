@@ -27,12 +27,6 @@ namespace PassengerJobs
         {
             ModEntry = modEntry;
 
-            if (!API.PassengerJobsApi.TryRegister(Api))
-            {
-                ModEntry.Logger.Error("PassengerJobs.API 1.0 is already registered by another implementation.");
-                return false;
-            }
-
             Translations = new TranslationInjector("cc.foxden.passenger_jobs");
             Translations.AddTranslationsFromCsv(Path.Combine(ModEntry.Path, "translations.csv"));
             Translations.AddTranslationsFromWebCsv("https://docs.google.com/spreadsheets/d/1sQ26qpB6czqGC0ObV6Y7OfwIEqPtGm1SBCLYvp47PSY/export?format=csv&gid=1132930393");
@@ -61,6 +55,14 @@ namespace PassengerJobs
             MultiplayerShim.TryInitialise();
 
             DV.Globals.G.Types.RecalculateCaches();
+
+            // Publish the API only after every fallible initialization step has succeeded. This prevents
+            // consumers from binding to a half-loaded PassengerJobs instance.
+            if (!API.PassengerJobsApi.TryRegister(Api))
+            {
+                ModEntry.Logger.Error("PassengerJobs.API 1.1 is already registered by another implementation.");
+                return false;
+            }
 
             var harmony = new Harmony(modEntry.Info.Id);
             harmony.PatchAll(Assembly.GetExecutingAssembly());

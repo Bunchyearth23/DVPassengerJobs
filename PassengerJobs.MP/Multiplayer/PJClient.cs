@@ -47,6 +47,13 @@ public class PJClient : IDisposable
     public void Dispose()
     {
         PJMain.Log("Client stopped");
+        RouteManager.RuralStationsCreated -= OnStationsCreated;
+        foreach (var tracked in _trackedStations.ToArray())
+        {
+            if (tracked.Key != null && tracked.Key.logicStation != null)
+                tracked.Key.logicStation.JobAddedToStation -= tracked.Value;
+        }
+        _trackedStations.Clear();
         _client = null;
 
         if (UnloadWatcher.isQuitting)
@@ -216,11 +223,12 @@ public class PJClient : IDisposable
             return;
         }
 
-        var job = controller.logicStation.availableJobs.Last();
+        var job = controller.logicStation.availableJobs.LastOrDefault();
         if (job == null || !PassJobType.IsPJType(job.jobType))
             return;
 
-        var taskData = job.tasks.FirstOrDefault().GetTaskData();
+        var firstTask = job.tasks.FirstOrDefault();
+        var taskData = firstTask?.GetTaskData();
         if (taskData == null)
         {
             PJMain.Error($"UpdateRouteSigns({controller.stationInfo.Name}) failed, first task data is null!");
@@ -247,13 +255,16 @@ public class PJClient : IDisposable
                 platformController = PlatformController.GetControllerForTrack(destinationPlatformIds[i]);
                 PJMain.LogDebug($"UpdateRouteSigns({controller.stationInfo.Name}) Inner: {destinationPlatformIds[i]} pcont:{platformController?.Platform?.DisplayId}, pcont:{platformController?.PlatformData?.Track?.ID}, pcont Null: {platformController == null}");
 
-                job.JobTaken += PlatformController.GetControllerForTrack(destinationPlatformIds[i]).RegisterOutgoingJob;
+                var intermediate = PlatformController.GetControllerForTrack(destinationPlatformIds[i]);
+                if (intermediate != null)
+                    job.JobTaken += intermediate.RegisterOutgoingJob;
             }
         }
 
         platformController = PlatformController.GetControllerForTrack(destinationPlatformIds.Last());
         PJMain.LogDebug($"UpdateRouteSigns({controller.stationInfo.Name}) Last: {destinationPlatformIds.Last()} pcont:{platformController?.Platform?.DisplayId}, pcont:{platformController?.PlatformData?.Track?.ID}, pcont Null: {platformController == null}");
-        job.JobTaken += PlatformController.GetControllerForTrack(destinationPlatformIds.Last()).RegisterIncomingJob;
+        if (platformController != null)
+            job.JobTaken += platformController.RegisterIncomingJob;
     }
 
     public void RegisterForJobAddedEvents(StationController controller)
@@ -287,9 +298,8 @@ public class PJClient : IDisposable
 
     public void UnregisterForJobAddedEvents(StationController controller)
     {
-        if (controller == null || controller.logicStation == null)
+        if (controller == null)
         {
-            PJMain.Error($"UpdateRouteSigns failed, {(controller == null ? "Station Controller is null!" : "Logic Station is null!")}");
             return;
         }
 
@@ -299,7 +309,8 @@ public class PJClient : IDisposable
             return;
         }
 
-        controller.logicStation.JobAddedToStation -= JobAddedHandler;
+        if (controller.logicStation != null)
+            controller.logicStation.JobAddedToStation -= JobAddedHandler;
         _trackedStations.Remove(controller);
     }
 

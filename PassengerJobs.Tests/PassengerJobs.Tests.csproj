@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netframework4.8</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PassengerJobs.API\PassengerJobs.API.csproj" />
+    <Compile Include="..\PassengerJobs\Integration\GenerationSuspensionPolicy.cs" Link="GenerationSuspensionPolicy.cs" />
+    <Compile Include="..\PassengerJobs\Integration\LifecyclePublicationGuard.cs" Link="LifecyclePublicationGuard.cs" />
+  </ItemGroup>
+</Project>

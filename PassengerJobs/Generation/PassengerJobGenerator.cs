@@ -411,7 +411,9 @@ namespace PassengerJobs.Generation
 
             List<TrainCarLivery> jobCarTypes = consistInfo.cars.Select(c => c.carType).ToList();
 
-            var chainController = GenerateController(jobType, null, jobCarTypes, consistInfo.track, destinations, false);
+            // Continue the chain with the cars that just completed the previous leg. Passing null here
+            // spawned a second, free consist and orphaned the original cars.
+            var chainController = GenerateController(jobType, consistInfo, jobCarTypes, consistInfo.track, destinations, false);
             tracker.Finish(chainController);
             yield break;
         }
@@ -421,6 +423,14 @@ namespace PassengerJobs.Generation
         private PassengerChainController? GenerateController(JobType jobType, PassConsistInfo? consistInfo, List<TrainCarLivery> jobCarTypes,
             RouteTrack startPlatform, RouteResult destinations, bool randomOrientation)
         {
+            // Close the race where strict mode is enabled while route calculation is running.
+            // Existing consists may continue their chain; only creation of free rolling stock is refused.
+            if (consistInfo == null && PJMain.Api.IsAutomaticGenerationSuspended)
+            {
+                PJMain.Log("[PassengerJobs.API] new consist generation refused because automatic generation is suspended");
+                return null;
+            }
+
             // Create job chain controller.
             string destString = string.Join(" - ", destinations.Tracks.Select(d => d.Station.YardID));
             var chainJobObject = new GameObject($"ChainJob[Passenger]: {Controller.stationInfo.YardID} - {destString}");

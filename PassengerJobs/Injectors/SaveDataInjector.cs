@@ -96,8 +96,11 @@ namespace PassengerJobs.Injectors
             {
                 if (loadedData?.GetObjectViaJSON<JobsSaveGameData>(SaveGameKeys.Jobs, JobSaveManager.serializeSettings) is JobsSaveGameData jobData)
                 {
+                    var existingPassengerIds = new HashSet<string>(mainJobData.jobChains
+                        .OfType<PassengerChainSaveData>()
+                        .Select(chain => chain.firstJobId));
                     JobChainSaveData[] combinedChains = mainJobData.jobChains
-                        .Concat(jobData.jobChains)
+                        .Concat(jobData.jobChains.Where(chain => !(chain is PassengerChainSaveData passenger) || existingPassengerIds.Add(passenger.firstJobId)))
                         .ToArray();
 
                     mainJobData.jobChains = combinedChains;
