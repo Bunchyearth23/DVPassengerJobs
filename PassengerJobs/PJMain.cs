@@ -2,6 +2,7 @@
 using HarmonyLib;
 using PassengerJobs.Generation;
 using PassengerJobs.Injectors;
+using PassengerJobs.Integration;
 using PassengerJobs.Platforms;
 using System;
 using System.IO;
@@ -17,6 +18,7 @@ namespace PassengerJobs
         public static PJModSettings Settings { get; private set; } = null!;
         public static bool Enabled => ModEntry.Active;
         public static TranslationInjector Translations { get; internal set; } = null!;
+        internal static PassengerJobsApiAdapter Api { get; } = new PassengerJobsApiAdapter();
 
 
         #region Enable/Disable
@@ -24,6 +26,12 @@ namespace PassengerJobs
         public static bool Load(UnityModManager.ModEntry modEntry)
         {
             ModEntry = modEntry;
+
+            if (!API.PassengerJobsApi.TryRegister(Api))
+            {
+                ModEntry.Logger.Error("PassengerJobs.API 1.0 is already registered by another implementation.");
+                return false;
+            }
 
             Translations = new TranslationInjector("cc.foxden.passenger_jobs");
             Translations.AddTranslationsFromCsv(Path.Combine(ModEntry.Path, "translations.csv"));
