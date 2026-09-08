@@ -6,6 +6,8 @@ The `bdvm-integration` branch preserves PassengerJobs gameplay and adds a small,
 
 The API is observational: it does not grant another mod authority to complete jobs, alter payouts, create consists or mutate PassengerJobs saves. Consumers remain responsible for their own idempotency and must fail closed when the API version is unsupported.
 
+The fork manifest reports 5.3.0 and intentionally omits the upstream auto-update feed. Following that feed could replace the integration build with an upstream package that does not contain `PassengerJobs.API.dll`. A fork-specific update channel will be added only after runtime validation and release packaging.
+
 ## Build
 
 Copy `Directory.Build.targets.EXAMPLE` to `Directory.Build.targets`, set the local Derail Valley paths, then build `PassengerJobs.sln`. The PassengerJobs build copies both `PassengerJobs.dll` and `PassengerJobs.API.dll` to its configured staging/install directory.
