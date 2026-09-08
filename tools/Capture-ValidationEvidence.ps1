@@ -35,7 +35,9 @@ $session = Get-Content -LiteralPath $sessionFile -Raw | ConvertFrom-Json
 $destination = Join-Path $OutputDirectory ("PassengerJobs-validation-$($session.sessionId).log")
 if (Test-Path -LiteralPath $log) {
     $bytes = [IO.File]::ReadAllBytes($log)
-    $offset = [Math]::Min([long]$session.playerLogLength, [long]$bytes.Length)
+    # Unity normally rotates/truncates Player.log at launch. Read from zero in that case;
+    # otherwise extract only bytes appended after the capture was armed.
+    $offset = if ($bytes.Length -lt [long]$session.playerLogLength) { 0L } else { [long]$session.playerLogLength }
     $text = [Text.Encoding]::UTF8.GetString($bytes, [int]$offset, $bytes.Length - [int]$offset)
     $selected = $text -split "`r?`n" | Where-Object { $_ -match 'PassengerJobs|BDVM|Multiplayer API|SkinManager|DVLangHelper' }
     [IO.File]::WriteAllLines($destination, $selected, [Text.UTF8Encoding]::new($false))
