@@ -74,13 +74,13 @@
 	  </None>
 	</ItemGroup>
   
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Windows_NT'">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Windows_NT' And '$(SkipPassengerJobsPostBuild)' != 'true'">
     <Copy SourceFiles="$(TargetPath);$(TargetDir)PassengerJobs.API.dll" DestinationFolder="$(PassengerJobsOutputDir)\" />
     <Exec Command="curl.exe &quot;https://docs.google.com/spreadsheets/d/1sQ26qpB6czqGC0ObV6Y7OfwIEqPtGm1SBCLYvp47PSY/export?format=csv&amp;gid=633527484&quot; -L &quot;https://docs.google.com&quot; -o &quot;$(TargetDir)\translations.csv&quot; &gt;NUL" />
     <Copy SourceFiles="$(TargetDir)\translations.csv" DestinationFolder="$(PassengerJobsOutputDir)\" />
   </Target>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(OS)' != 'Windows_NT'">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(OS)' != 'Windows_NT' And '$(SkipPassengerJobsPostBuild)' != 'true'">
     <Copy SourceFiles="$(TargetPath);$(TargetDir)PassengerJobs.API.dll" DestinationFolder="$(PassengerJobsOutputDir)/" />
     <Exec Command="curl &quot;https://docs.google.com/spreadsheets/d/1sQ26qpB6czqGC0ObV6Y7OfwIEqPtGm1SBCLYvp47PSY/export?format=csv&amp;gid=633527484&quot; -L &quot;https://docs.google.com&quot; -o &quot;$(TargetDir)/translations.csv&quot; &gt; /dev/null" />
     <Copy SourceFiles="$(TargetDir)/translations.csv" DestinationFolder="$(PassengerJobsOutputDir)/" />

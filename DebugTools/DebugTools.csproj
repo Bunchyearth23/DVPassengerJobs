@@ -38,7 +38,7 @@
 	<ItemGroup>
 		<Publicize Include="Assembly-CSharp" IncludeCompilerGeneratedMembers="false" />
 	</ItemGroup>
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(SkipPassengerJobsPostBuild)' != 'true'">
 		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DvInstallDir)\Mods\PassengerJobs\" />
 	</Target>
 </Project>

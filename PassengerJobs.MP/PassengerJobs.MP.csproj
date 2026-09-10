@@ -36,7 +36,7 @@
 		<Reference Include="UnityEngine.UI" />
 		<Reference Include="UnityModManager" />
 	</ItemGroup>
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(SkipPassengerJobsPostBuild)' != 'true'">
 		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DvInstallDir)\Mods\PassengerJobs\" />
 	</Target>
 </Project>
