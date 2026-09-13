@@ -1,6 +1,6 @@
 {
   "Id": "PassengerJobs",
-  "DisplayName": "Passenger Jobs",
+  "DisplayName": "BDVM Fork - Passenger Jobs",
   "Author": "Katycat",
   "Version": "5.3.0",
   "AssemblyName": "PassengerJobs.dll",
